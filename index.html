@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche SSIAP 1 - Électrocution</title>
+  <style>
+    /* Centrage du container et fond aux couleurs incendie */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ff4d4d, #ff9933, #ffcc00);
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border: 2px solid #000; /* Bordure noire */
+    }
+    /* Nouvelle structure de header aligné avec flexbox */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .header .icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+    .header h1 {
+      margin: 0 10px;
+      font-size: 22px;
+      color: #333;
+    }
+    .step {
+      display: none;
+    }
+    .visible {
+      display: block;
+    }
+    .alert-btn, .next-btn {
+      background-color: red;
+      color: white;
+      padding: 10px;
+      /* Pour .alert-btn on garde 100% de largeur, 
+         mais pour .next-btn nous allons redéfinir la largeur plus bas */
+      width: 100%;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+    /* Bouton d'alerte passe en vert simple lorsqu'activé */
+    .alert-btn.active {
+      background-color: #4CAF50;
+      animation: flash 0.5s ease;
+    }
+    @keyframes flash {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .message-box {
+      display: none;
+      background: #e3f2fd;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    /* Bouton Recommencer en gris foncé, largeur réduite, centré et avec bordure noire */
+    .restart-btn {
+      background-color: #555;
+      color: white;
+      padding: 10px 20px;
+      border: 2px solid #000; /* Bordure noire */
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px auto 0;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+    .restart-btn:hover {
+      background-color: #444;
+    }
+    /* Bouton Index (couleur bleue) avec bordure noire */
+    .index-btn {
+      background-color: #008CBA;
+      color: white;
+      padding: 10px 20px;
+      border: 2px solid #000; /* Bordure noire */
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px auto 0;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+    .index-btn:hover {
+      background-color: #007B9E;
+    }
+    /* Bouton Suivant avec bordure noire et largeur réduite */
+    .next-btn {
+      border: 2px solid #000; /* Bordure noire */
+      background-color: #444;
+      width: 30%; /* Réduction de la largeur du background du bouton */
+      margin: 10px auto 0;
+    }
+    /* Retrait des puces sur le bloc de liste de l'étape 9 */
+    #step9 ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    /* Styles pour l'overlay Index */
+    #indexOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .overlay-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 90%;
+    }
+    .overlay-content ul {
+      list-style: none;
+      padding: 0;
+    }
+    .overlay-content li {
+      margin: 10px 0;
+    }
+    .overlay-content a {
+      color: #008CBA;
+      text-decoration: none;
+      font-size: 18px;
+    }
+    .overlay-content a:hover {
+      text-decoration: underline;
+    }
+    .close-overlay-btn {
+      background-color: #555;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+    .close-overlay-btn:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header avec flexbox -->
+    <div class="header">
+      <span class="icon">⚠️</span>
+      <h1>Intervention en cas d’électrocution</h1>
+      <span class="icon">⚠️</span>
+    </div>
+    
+    <div id="step1" class="step visible">
+      <h3>1️⃣ Alerter immédiatement le PCS</h3>
+      <p>Informer le PCS de la situation en précisant l’emplacement exact, l’état de la victime et la présence d’un danger électrique.</p>
+      <button class="alert-btn" onclick="showMessage('message1', this)">📞 Message radio au PCS</button>
+      <div id="message1" class="message-box">
+        "PC de rondier, j’ai une victime inconsciente en contact avec un câble électrique. Je suis au rez-de-chaussée du bâtiment sécurité au niveau de l'armoire électrique encloisonnée. j'interviens."
+      </div>
+      <button class="next-btn" onclick="nextStep(1)">Suivant ➡️</button>
+      <button class="index-btn" onclick="openOverlay()">Index</button>
+    </div>
+    
+    <div id="step2" class="step">
+      <h3>2️⃣ Sécuriser sa propre personne</h3>
+      <p>Ne pas toucher la victime directement. Évaluer le danger et éviter toute propagation du courant.</p>
+      <button class="next-btn" onclick="nextStep(2)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step3" class="step">
+      <h3>3️⃣ Utiliser le bouton d’arrêt d’urgence</h3>
+      <p>Si un bouton d’arrêt d’urgence est disponible à proximité de l’armoire électrique, l’actionner immédiatement pour couper le courant.</p>
+      <button class="next-btn" onclick="nextStep(3)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step4" class="step">
+      <h3>4️⃣ Confirmer avec le PCS la coupure du courant</h3>
+      <p>Avant toute intervention sur la victime, s’assurer auprès du PCS que l’électricité est bien coupée.</p>
+      <button class="alert-btn" onclick="showMessage('message2', this)">📞 Message radio au PCS</button>
+      <div id="message2" class="message-box">
+        "PC de rondier, j’ai actionné l’arrêt d’urgence. Confirmez-vous la coupure du courant ? (Si l'armoire est reliée à une Gestion Technique Centralisée 'GTC')"
+      </div>
+      <button class="next-btn" onclick="nextStep(4)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step5" class="step">
+      <h3>5️⃣ Sécuriser la zone</h3>
+      <p>Empêcher l’accès aux autres personnes, éviter tout danger supplémentaire et baliser la zone.</p>
+      <button class="next-btn" onclick="nextStep(5)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step6" class="step">
+      <h3>6️⃣ Porter secours et retirer le câble en toute sécurité</h3>
+      <p>Utiliser un objet isolant (bois sec, plastique, vêtements secs) pour éloigner le câble de la victime.</p>
+      <button class="next-btn" onclick="nextStep(6)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step7" class="step">
+      <h3>7️⃣ Effectuer les gestes de premiers secours (incluant le retournement d'urgence si nécessaire)</h3>
+      <p>Mettre la victime en PLS si elle respire, pratiquer un massage cardiaque si elle est en arrêt.</p>
+      <button class="next-btn" onclick="nextStep(7)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step8" class="step">
+      <h3>8️⃣ Alerter à nouveau le PCS</h3>
+      <p>Informer le PCS de l’évolution de la situation et des gestes effectués.</p>
+      <button class="alert-btn" onclick="showMessage('message3', this)">📞 Message radio au PCS</button>
+      <div id="message3" class="message-box">
+        "PC de rondier, la victime est maintenant en PLS. J’attends l’arrivée des secours."
+      </div>
+      <button class="next-btn" onclick="nextStep(8)">Suivant ➡️</button>
+    </div>
+    
+    <div id="step9" class="step">
+      <h3>9️⃣ Accueillir les secours</h3>
+      <p>Donner aux secours les informations suivantes :</p>
+      <ul>
+        <li>Lieu exact de l'incident</li>
+        <li>État de la victime</li>
+        <li>Actions entreprises</li>
+        <li>Autres dangers éventuels</li>
+      </ul>
+      <button class="next-btn" onclick="nextStep(9)">Suivant ➡️</button>
+    </div>
+
+    <div id="step10" class="step">
+      <h3>🔟 Noter l’intervention dans la main courante</h3>
+      <p>Signaler l’incident au responsable de sécurité et au service technique pour inspection de l’armoire électrique et éviter un nouvel accident.</p>
+      <button class="restart-btn" onclick="restart()">Recommencer</button>
+      <button class="index-btn" onclick="openOverlay()">Index</button>
+    </div>
+  </div>
+  
+  <!-- Overlay Index -->
+  <div id="indexOverlay">
+    <div class="overlay-content">
+      <h2>Index</h2>
+      <ul>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-1/">Quiz 1</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-2/">Quiz 2</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-3/">Quiz 3</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-4/">Quiz 4</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-5/">Quiz 5</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-6/">Quiz 6</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-7/">Quiz 7</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-AFPA-8/">Quiz 8</a></li>
+        <li><a href="https://remi-mason.github.io/Mega-Quiz/">Mega-Quiz</a></li>
+        <li><a href="https://remi-mason.github.io/Quiz-Oral/">Quiz-Oral</a></li>
+        <li><a href="https://remi-mason.github.io/Pratique/">Pratique</a></li>
+      </ul>
+      <button class="close-overlay-btn" onclick="closeOverlay()">Fermer</button>
+    </div>
+  </div>
+  
+  <script>
+    function nextStep(step) {
+      document.getElementById(`step${step}`).classList.remove('visible');
+      document.getElementById(`step${step + 1}`).classList.add('visible');
+    }
+    
+    function showMessage(id, btn) {
+      document.getElementById(id).style.display = 'block';
+      btn.classList.add('active');
+    }
+    
+    function restart() {
+      const steps = document.querySelectorAll('.step');
+      steps.forEach(step => step.classList.remove('visible'));
+      const alertButtons = document.querySelectorAll('.alert-btn');
+      alertButtons.forEach(btn => btn.classList.remove('active'));
+      const messages = document.querySelectorAll('.message-box');
+      messages.forEach(msg => msg.style.display = 'none');
+      document.getElementById('step1').classList.add('visible');
+    }
+    
+    function openOverlay() {
+      document.getElementById('indexOverlay').style.display = 'flex';
+    }
+    
+    function closeOverlay() {
+      document.getElementById('indexOverlay').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
